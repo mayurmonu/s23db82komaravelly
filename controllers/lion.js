@@ -10,10 +10,7 @@ exports.lion_list = async function(req, res) {
         res.send(`{"error": ${err}}`);
         } 
 };
-// for a specific lion.
-exports.lion_detail = function(req, res) {
- res.send('NOT IMPLEMENTED: lion detail: ' + req.params.id);
-};
+
 // Handle lion create on POST.
 exports.lion_create_post = function(req, res) {
  res.send('NOT IMPLEMENTED: lion create POST');
@@ -58,3 +55,15 @@ exports.lion_create_post = async function(req, res) {
     res.send(`{"error": ${err}}`);
     }
    };
+   // for a specific lion.
+   exports.lion_detail = async function(req, res) {
+   console.log("detail" + req.params.id)
+   try {
+   result = await lion.findById( req.params.id)
+   res.send(result)
+   } catch (error) {
+   res.status(500)
+   res.send(`{"error": document for id ${req.params.id} not found`);
+   }
+   };
+   
