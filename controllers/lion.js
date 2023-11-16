@@ -22,6 +22,32 @@ exports.lion_delete = async function(req, res) {
     res.send(`{"error": Error deleting ${err}}`);
     }
     };
+    // Handle a show one view with id specified by query
+exports.lion_view_one_Page = async function(req, res) {
+    console.log("single view for id " + req.query.id)
+    try{
+    result = await lion.findById( req.query.id)
+    res.render('liondetail',
+    { title: 'lion Detail', toShow: result });
+    }
+    catch(err){
+    res.status(500)
+    res.send(`{'error': '${err}'}`);
+    }
+    };
+// Handle building the view for creating a lion.
+// No body, no in path parameter, no query.
+// Does not need to be async
+exports.lion_create_Page = function(req, res) {
+console.log("create view")
+try{
+res.render('lioncreate', { title: 'lion Create'});
+}
+catch(err){
+res.status(500)
+res.send(`{'error': '${err}'}`);
+}
+};
     
 
 // Handle lion create on POST.
@@ -68,6 +94,7 @@ exports.lion_create_post = async function(req, res) {
     res.send(`{"error": ${err}}`);
     }
    };
+
    // for a specific lion.
    exports.lion_detail = async function(req, res) {
    console.log("detail" + req.params.id)
@@ -79,4 +106,34 @@ exports.lion_create_post = async function(req, res) {
    res.send(`{"error": document for id ${req.params.id} not found`);
    }
    };
+   // Handle building the view for updating a lion.
+// query provides the id
+exports.lion_update_Page = async function(req, res) {
+    console.log("update view for item "+req.query.id)
+    try{
+    let result = await lion.findById(req.query.id)
+    res.render('lionupdate', { title: 'lion Update', toShow: result });
+    }
+    catch(err){
+    res.status(500)
+    res.send(`{'error': '${err}'}`);
+    }
+    };
+    / Handle a delete one view with id from query
+exports.lion_delete_Page = async function(req, res) {
+console.log("Delete view for id " + req.query.id)
+try{
+result = await lion.findById(req.query.id)
+res.render('liondelete', { title: 'lion Delete', toShow:
+result });
+}
+catch(err){
+res.status(500)
+res.send(`{'error': '${err}'}`);
+}
+};
+
+
+    
+    
    
