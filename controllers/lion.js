@@ -10,15 +10,28 @@ exports.lion_list = async function(req, res) {
         res.send(`{"error": ${err}}`);
         } 
 };
+// Handle lion delete on DELETE.
+exports.lion_delete = async function(req, res) {
+    console.log("delete " + req.params.id)
+    try {
+    result = await lion.findByIdAndDelete( req.params.id)
+    console.log("Removed " + result)
+    res.send(result)
+    } catch (err) {
+    res.status(500)
+    res.send(`{"error": Error deleting ${err}}`);
+    }
+    };
+    
 
 // Handle lion create on POST.
 exports.lion_create_post = function(req, res) {
  res.send('NOT IMPLEMENTED: lion create POST');
 };
-// Handle lion delete form on DELETE.
+/*// Handle lion delete form on DELETE.
 exports.lion_delete = function(req, res) {
  res.send('NOT IMPLEMENTED: lion delete DELETE ' + req.params.id);
-};
+};*/
 // Handle lion update form on PUT.
 exports.lion_update_put = function(req, res) {
  res.send('NOT IMPLEMENTED: lion update PUT' + req.params.id);
