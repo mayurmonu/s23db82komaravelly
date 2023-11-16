@@ -1,0 +1,35 @@
+extends layout
+ 
+block content
+  h1= title
+  //if (toShow == null)
+     //h2 No instance to create
+  //else
+  form(id='lionForm', action="/resource/lions", method="POST")
+    div.form-group
+      label.lionAttr(for='lion_color') lion color
+      input#lion_color(type='text', name='lion_color')
+    div.form-group
+      label.lionAttr(for='lion_breed') lion breed
+      input#lion_breed(type='text', name='lion_breed')
+    div.form-group
+      label.lionAttr(for='lion_price') lion price
+      input#lion_price(type='number', name='lion_price')
+    input(type="submit")
+  script.
+    document.forms['lionForm'].addEventListener('submit', (event) => {
+        event.preventDefault();
+        // TODO do something here to show user that form is being submitted
+        fetch(event.target.action, {
+            method: 'POST',
+            body: new URLSearchParams(new FormData(event.target)) // event.target is the form
+        }).then((resp) => {
+            return resp.text(); // or resp.text() or whatever the server sends
+        }).then((body) => {
+            alert("Save succeeded")
+            // TODO handle body
+        }).catch((error) => {
+            // TODO handle error
+            alert("Save failed " + error)
+        });
+    });
