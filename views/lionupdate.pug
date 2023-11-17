@@ -1,49 +1,43 @@
-
-
 extends layout
 
 block content
   h1= title
-
-  - let lionid = toShow._id
-  - let lion_color = toShow.lion_color
-  - let lion_breed = toShow.lion_breed
-  - let lion_price = toShow.lion_price
-
-  div.row(class='mb-2')
-    div.mr-1 ID is
-    div #{lionid}
-
-  - let actionid = "/resource/lion/" + lionid
-  form(id='lionForm', action= actionid, method="PUT")
-    div.form-group
-      label.lionAttr(for='lion_color') lion_color
-      input#lion_color(type='text', name='lion_color', value= lion_color )
-
-    div.form-group
-      label.lionAttr(for='lion_breed') lion_breed
-      input#lion_breed(type='text', name='lion_breed', value= lion_breed )
-
-    div.form-group
-      label.lionAttr(for='lion_price') lion_price
-      input#lion_price(type='number', name='lion_price', value= lion_price )
-
-    input(type="submit")
-
-  script.
-    document.forms['lionForm'].addEventListener('submit', (event) => {
-      event.preventDefault();
-      // TODO do something here to show user that form is being submitted
-      fetch(event.target.action, {
-        method: 'PUT',
-        body: new URLSearchParams(new FormData(event.target)) // event.target is the form
-      }).then((resp) => {
-        return resp.text(); // or resp.text() or whatever the server sends
-      }).then((body) => {
-        alert("Update succeeded")
-        // TODO handle body
-      }).catch((error) => {
-        // TODO handle error
-        alert("Update failed " + error )
+  if (toShow == null)
+    h2 No instance to update
+  else
+    - let lionid = toShow._id
+    - let lion_color = toShow.lion_color
+    - let lion_breed = toShow.lion_breed
+    - let lion_price = toShow.lion_price
+    div.row(class='mb-2')
+      div.mr-1 ID is
+      div #{lionid}
+    - let actionid = "/resource/lions/" + lionid
+    form(id='lionForm', action=actionid, method="PUT")
+      div.form-group
+        label.lionAttr(for='lion_color') lion_color
+        input#lion_color(type='text', name='lion_color', value=lion_color)
+      div.form-group
+        label.lionAttr(for='lion_breed') lion_breed
+        input#lion_breed(type='text', name='lion_breed', value=lion_breed)
+      div.form-group
+        label.lionAttr(for='lion_price') lion price
+        input#lion_price(type='number', name='lion_price', value=lion_price)
+      input(type="submit")
+    script.
+      document.forms['lionForm'].addEventListener('submit', (event) => {
+        event.preventDefault();
+        // TODO do something here to show the user that the form is being submitted
+        fetch(event.target.action, {
+          method: 'PUT',
+          body: new URLSearchParams(new FormData(event.target)) // event.target is the form
+        }).then((resp) => {
+          return resp.text(); // or resp.text() or whatever the server sends
+        }).then((body) => {
+          alert("Update succeeded");
+          // TODO handle body
+        }).catch((error) => {
+          // TODO handle error
+          alert("Update failed " + error);
+        });
       });
-    });
