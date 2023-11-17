@@ -1,25 +1,17 @@
 extends layout
 block content
-    div(class="container-fluid")
-        h1= title
-    - let items = results;
-    - let o;
-        div(class="row")
-            each form,item in results
-                div(class = "col-sm-2 bg-primary" onclick=`buy(${item})`) #{form.lion_color}             
-                div(class = "col-sm-2 bg-primary" onclick=`buy(${item})`) #{form.lion_breed}                
-                div(class = "col-sm-2 bg-primary" onclick=`buy(${item})`) #{form.lion_price}
-                hr
-    br
-    h5= 'buy'
-
-    div(class="container-fluid")
-      each lion,index in results
-        div(class="row", onclick=`buy(${index})`)
-          div(class="col-sm-2") <br>lion #{index}: #{lion.lion_color} breed:#{lion.lion_breed} price:#{lion.lion_price}
-
-    script.
-        function buy(itemNo)
-        {
-            alert(`You purchased Item ${itemNo+1}`)
-        }
+ h1= title
+ - let items = results;
+   each item in items
+    - let destination = `dispatch("/lion/update?id=${item._id}")`
+      div
+       p lionName  - #{item.lionName}
+       p lionCost  - #{item.lionCost}
+       p Description - #{item.Description}
+       button.btn( class="btn-primary ml-1", onclick= destination) Update
+       br
+       br
+ script.
+  function dispatch(path){
+   window.location.href=path
+  }
