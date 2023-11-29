@@ -24,20 +24,26 @@ block content
         label.lionAttr(for='lion_price') lion price
         input#lion_price(type='number', name='lion_price', value=lion_price)
       input(type="submit")
-    script.
-      document.forms['lionForm'].addEventListener('submit', (event) => {
-        event.preventDefault();
-        // TODO do something here to show the user that the form is being submitted
-        fetch(event.target.action, {
-          method: 'PUT',
-          body: new URLSearchParams(new FormData(event.target)) // event.target is the form
-        }).then((resp) => {
-          return resp.text(); // or resp.text() or whatever the server sends
-        }).then((body) => {
-          alert("Update succeeded");
-          // TODO handle body
-        }).catch((error) => {
-          // TODO handle error
-          alert("Update failed " + error);
-        });
+
+  script.
+    document.forms['lionForm'].addEventListener('submit', (event) => {
+      event.preventDefault();
+      // TODO do something here to show user that the form is being submitted
+      fetch(event.target.action, {
+        method: 'PUT',
+        body: new URLSearchParams(new FormData(event.target)) // event.target is the form
+      }).then((resp) => {
+        if (resp.ok) {
+          alert("Lion Updated Successfully");
+          document.getElementById('lionForm').reset();
+        } else {
+          alert("Failed to Update Lion");
+        }
+      }).then((body) => {
+        console.log(body);
+        // TODO handle body
+      }).catch((error) => {
+        // TODO handle error
+        alert("Update failed " + error);
       });
+    });
