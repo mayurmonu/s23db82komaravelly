@@ -1,7 +1,15 @@
 const mongoose = require("mongoose")
 const lionSchema = mongoose.Schema({
-    lion_color: String,
-    lion_breed: String,
+    lion_color: { type : String,
+        required : true,
+        minlength : 4,
+        maxlength : 7,
+    },
+    lion_breed: {type: String,
+        required : true,
+        minlength : 4,
+        maxlength : 7,
+    },
     lion_price: { type:Number,
         min : 0,
         max : 300000,
