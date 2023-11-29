@@ -7,19 +7,6 @@ var logger = require('morgan');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
-require('dotenv').config();
-const connectionString =
-process.env.MONGO_CON
-mongoose = require('mongoose');
-mongoose.connect(connectionString);
-
-//Get the default connection
-var db = mongoose.connection;
-//Bind connection to error event
-db.on('error', console.error.bind(console, 'MongoDB connectionerror:'));
-db.once("open", function(){
-console.log("Connection to DB succeeded")});
-
 passport.use(new LocalStrategy(
   function(username, password, done) {
   Account.findOne({ username: username })
@@ -32,6 +19,12 @@ passport.use(new LocalStrategy(
   return done(null, false, { message: 'Incorrect password.' });
   }
   return done(null, user);
+  })
+  .catch(function(err){
+  return done(err)
+  })
+  })
+ )
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -39,13 +32,50 @@ var lionRouter = require('./routes/lion');
 var boardRouter = require('./routes/board');
 var chooseRouter = require('./routes/choose');
 var lion = require("./models/lion");
-var resourceRouter = require('./routes/resource');
 
+var resourceRouter = require('./routes/resource');
 var app = express();
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(require('express-session')({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false
+ }));
+ app.use(passport.initialize());
+ app.use(passport.session());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/lion', lionRouter);
+app.use('/board', boardRouter);
+app.use('/choose', chooseRouter);
+app.use('/resource', resourceRouter);
+
+
+require('dotenv').config();
+const connectionString = 
+process.env.MONGO_CON
+mongoose = require('mongoose');
+mongoose.connect(connectionString);
+
+var db = mongoose.connection;
+//Bind connection to error event 
+db.on('error', console.error.bind(console, 'MongoDB connectionerror:'));
+db.once("open", function(){
+console.log("Connection to DB succeeded")});
 
 async function recreateDB(){
   // Delete everything
   await lion.deleteMany();
+  
   let instance1 = new
   lion({lion_color:"grey", lion_breed:'Indian lion',lion_price:100000});
   let instance2 = new
@@ -67,35 +97,15 @@ async function recreateDB(){
       ).catch(err=>{
       console.error(err)
       });
- }
- let reseed = true;
- if (reseed) {recreateDB();}
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+}
+let reseed = true;
+if (reseed) {recreateDB();
+}
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-
-app.use(require('express-session')({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: false
-  }));
-  app.use(passport.initialize());
-  app.use(passport.session());
-  
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/lion', lionRouter);
-app.use('/board', boardRouter);
-app.use('/choose', chooseRouter);
-app.use('/resource', resourceRouter);
-
+var Account =require('./models/Account');
+passport.use(new LocalStrategy(Account.authenticate()));
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -112,5 +122,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
 
 module.exports = app;
